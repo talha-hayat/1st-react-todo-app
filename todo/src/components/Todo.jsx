@@ -1,69 +1,69 @@
-import { useState } from "react";
+import { useState } from "react"
 
-export const Todo = ()=>{
-    // Varibles 
-    let [inptext,setInptext] = useState("");
-    let [storetext,setStoretext] = useState([]);
+export function Todo(){
 
-    // Functions 
-    function taskBtn(){
-        // console.log("Task",inptext)
-        setStoretext([...storetext,{value:inptext , status:false}])
-        // console.log(storetext)
-        setInptext("")
+    let [inp,setInp] =useState("") 
+    let [inpArr , setInpArr] = useState([])
+
+    function change(value){
+        setInp(value)
     }
 
-    function text(value){
-        setInptext(value)
+    function addTask(){
+        inp===""? alert("Please fill the todo"):
+        setInpArr([...inpArr , {value:inp.trim() , status:false}]);
+        setInp("");
     }
 
-    // function del(index){
-    //     console.log("delete",index)
-    //     let updatetext = [...storetext]
-    //     updatetext.splice(index,1)
-    //     setStoretext(updatetext)
-    // }
-
-    function status(index){
-            let statusArr = storetext.map((value , i)=>{
-            return index === i ? {...value , status : !value.status}: value ;
-            
-            })
-            setStoretext(statusArr)
-            // console.log(storetext)
+    function deleteAll(){
+        setInpArr([])
     }
 
     function edit(index){
-        let EditArr = storetext.map((value , i)=>{
-            
-            return index === i ? {...value , value :prompt("Edit Here...", value.value)}: value ;
-            
-            })
-            setStoretext(EditArr)
+        let updateTodo = inpArr.map((task , i )=>{
+
+        //    return index === i ? {...inpArr , value:prompt("Edit here:",task.value) ,status: task.status} : task;
+
+        // other way:
+
+            if(index===i){
+                let exp = prompt("Edit here!",task.value)
+                if(exp !==null){
+                    return {...inpArr , value:exp ,status: task.status}
+                }
+            }
+            return task
+        })
+        setInpArr(updateTodo)           
+    }
+
+    function deletetodo(index){
+        let delArr = [...inpArr]
+        delArr.splice(index,1)
+        setInpArr(delArr)
     }
 
     return(
         <div>
-            <div className="flex w-[80%] mx-auto gap-2 mt-8">
-                <input onChange={(e)=>{text(e.target.value)}} placeholder="Enter Todo..." value={inptext} className="flex-1 border-2 border-black rounded-xl p-4 h-[50px]" type="text" />
-                <button onClick={taskBtn} className="rounded-lg text-white px-4 h-[50px] bg-green-600 hover:bg-green-700">Add Task</button>
+
+            <div className="flex h-[40px] mt-8 gap-2 w-[80%] mx-auto">
+                <input value={inp} onChange={(e)=>{change(e.target.value)}} className="border-2 border-black flex-1 px-3 rounded-xl" type="text" placeholder="Enter Task..."/>
+                <button onClick={addTask} className="border-2 border-green-500 text-green-500 rounded-lg px-2 hover:bg-green-500 hover:text-white">Add Todo</button>
+                <button onClick={deleteAll} className="border-2 border-red-500 text-red-500 rounded-lg px-2 hover:bg-red-500 hover:text-white">Delete All</button>
             </div>
 
-            <div className=" w-[80%] mx-auto mt-8 gap-4">
-                <ul>
+            <div className=" h-[100%] mt-8  w-[80%] mx-auto ">
+                <ul >
                     {
-                        storetext.map((task,index)=>{
+                        inpArr.map((task , index)=>{
                             return(
-                                <div className="flex  bg-slate-100 m-2 p-2  rounded-md hover:bg-slate-200">
-                                    <p className={`${task.status ? "line-through" : "" } flex-1`}>
-                                    <li key={index} className="w-[100%] p-2 ">{task.value}</li> 
-                                    </p>
-                                    <p className="">
-                                    <button onClick={()=>{edit(index)}} className="bg-green-500 h-[40px]  rounded-md text-white px-4 hover:bg-green-700">Edit</button>
-                                    <button onClick={()=>{status(index)}} className="bg-blue-500 h-[40px] rounded-md text-white ml-4 w-[90px] px-2  hover:bg-blue-700">{task.status ? "Completed" : "Complete"}</button>
-                                    </p>
-                                </div>
-                            )
+                            <li key={index} className="mt-3 p-4 w-[100%] flex justify-between items-center bg-slate-100 rounded-lg cursor-pointer hover:bg-slate-200">
+                                <p>{task.value}</p>
+                                <div className="">
+                                <button onClick={()=>{edit(index)}} className="bg-green-500 text-white rounded-lg p-1 px-4 mr-4 hover:bg-green-600">Edit</button>  
+                                <button onClick={()=>{deletetodo(index)}} className="text-white bg-red-500 rounded-lg p-1 px-4  hover:bg-red-600 ">Delete</button>
+                                </div> 
+                            </li>)
                         })
                     }
                 </ul>
